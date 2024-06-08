@@ -5,14 +5,12 @@
         </div>
         <div class="col-6">
             <x-shared.success-message />
-            <x-shared.submit-idea />
-            <hr>
-            @foreach ($ideas as $idea)
-                <div class="mt-3">
-                    <x-shared.idea-card :idea="$idea" />
-                </div>
-            @endforeach
-            {{ $ideas->withQueryString()->links() }}
+            <div class="mt-3">
+                <x-shared.idea-card
+                    :idea="$idea"
+                    :editing="$editing"
+                />
+            </div>
         </div>
         <div class="col-3">
             <x-shared.search-bar />

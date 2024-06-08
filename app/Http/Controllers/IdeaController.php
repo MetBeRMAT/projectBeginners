@@ -9,43 +9,59 @@ class IdeaController extends Controller
 {
     public function store()
     {
-        request()->validate([
-            'idea' => 'required|min:5|max:255',
+        $validated = request()->validate([
+            'content' => 'required|min:3|max:255',
         ]);
 
-        $idea = Idea::create([
-            'content' => request()->get('idea'),
-        ]);
+        $validated['user_id'] = auth()->id();
+
+        Idea::create($validated);
 
         return redirect()->back()->with('success', 'Idea was added successfully!');
     }
 
-    public function destroy(Idea $idea)
-    {
-        $idea->delete();
-
-        return redirect()->route('home')->with('success', 'Idea was deleted successfully!');
-    }
-
     public function show(Idea $idea)
     {
-        return view('components.ideas.show', compact('idea'));
+        $editing = false;
+        $user = auth()->user();
+        return view('ideas.show', compact('idea', 'editing', 'user'));
     }
+    public function destroy(Idea $idea)
+    {
+        if (auth()->id() !== $idea->user_id) {
+            return redirect()->route('dashboard')->with('error', 'You are not allowed to delete this idea!');
+        }
+
+        $idea->delete();
+
+        return redirect()->route('dashboard')->with('success', 'Idea was deleted successfully!');
+    }
+
 
     public function edit(Idea $idea)
     {
+        if (auth()->id() !== $idea->user_id) {
+            return redirect()->route('dashboard')->with('error', 'You are not allowed to edit this idea!');
+        }
+
         $editing = true;
-        return view('components.ideas.show', compact('idea', 'editing'));
+        $user = auth()->user();
+        return view('ideas.show', compact('idea', 'editing', 'user'));
     }
+
 
     public function update(Idea $idea)
     {
+        if (auth()->id() !== $idea->user_id) {
+            return redirect()->route('dashboard')->with('error', 'You are not allowed to edit this idea!');
+        }
+
         request()->validate([
-            'idea' => 'required|min:5|max:255',
+            'content' => 'required|min:5|max:255',
         ]);
 
         $idea->update([
-            'content' => request()->get('idea'),
+            'content' => request()->get('content'),
         ]);
 
         return redirect()->back()->with('success', 'Idea was updated successfully!');
