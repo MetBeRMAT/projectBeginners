@@ -9,10 +9,11 @@ class IdeaController extends Controller
 {
     public function store()
     {
-
         $validated = request()->validate([
-            'content' => 'required|min:5|max:255',
+            'content' => 'required|min:3|max:255',
         ]);
+
+        $validated['user_id'] = auth()->id();
 
         Idea::create($validated);
 
@@ -36,21 +37,12 @@ class IdeaController extends Controller
         return redirect()->route('dashboard')->with('success', 'Idea was deleted successfully!');
     }
 
-    public function show(Idea $idea)
-    {
-        if (auth()->user()->id !== $idea->user_id) {
-            return redirect()->route('home')->with('error', 'You are not authorized to view this page!');
-        }
-
-        return view('components.ideas.show', compact('idea'));
-    }
 
     public function edit(Idea $idea)
     {
-        if (auth()->user()->id !== $idea->user_id) {
-            return redirect()->route('home')->with('error', 'You are not authorized to view this page!');
+        if (auth()->id() !== $idea->user_id) {
+            return redirect()->route('dashboard')->with('error', 'You are not allowed to edit this idea!');
         }
-
 
         $editing = true;
         $user = auth()->user();
@@ -60,8 +52,8 @@ class IdeaController extends Controller
 
     public function update(Idea $idea)
     {
-        if (auth()->user()->id !== $idea->user_id) {
-            return redirect()->route('home')->with('error', 'You are not authorized to view this page!');
+        if (auth()->id() !== $idea->user_id) {
+            return redirect()->route('dashboard')->with('error', 'You are not allowed to edit this idea!');
         }
 
         request()->validate([

@@ -9,43 +9,46 @@ class AuthController extends Controller
 {
     public function register()
     {
-        return view('auth.register');
+        return view('components.auth.register');
     }
 
     public function store()
     {
-        $validated = request()->validate([
+        $validate = request()->validate([
             'name' => 'required|min:3|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8|confirmed',
         ]);
 
-        User::create($validated);
+        User::create($validate);
 
-        return redirect()->route('home');
+        return redirect()->route('dashboard')->with('success', 'Welcome!');
     }
 
     public function login()
     {
-        return view('auth.login');
+        return view('components.auth.login');
     }
 
-    public function authenticate()
+    public function authentication()
     {
-        $validated = request()->validate([
+        $validate = request()->validate([
             'email' => 'required|email',
             'password' => 'required|min:8',
         ]);
 
-        auth()->attempt($validated);
+        if (auth()->attempt($validate)) {
+            request()->session()->regenerate();
+            return redirect()->route('dashboard')->with('success', 'Login successfully!');
+        }
 
-        return redirect()->route('home')->with('success', 'You are now logged in!');
+        return redirect()->back()->with('error', 'Authentication failed');
     }
 
     public function logout()
     {
         auth()->logout();
 
-        return redirect()->route('home')->with('success', 'You are now logged out!');
+        return redirect()->route('dashboard')->with('success', 'Logout successfully!');
     }
 }
