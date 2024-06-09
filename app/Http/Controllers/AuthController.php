@@ -7,15 +7,17 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    public function register(){
+    public function register()
+    {
         return view('auth.register');
     }
 
-    public function store(){
+    public function store()
+    {
         $validated = request()->validate([
-            'name' =>'required|min:3|max:255',
-            'email' =>'required|email|unique:users,email',
-            'password' =>'required|min:8|confirmed',
+            'name' => 'required|min:3|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:8|confirmed',
         ]);
 
         User::create($validated);
@@ -23,14 +25,16 @@ class AuthController extends Controller
         return redirect()->route('home');
     }
 
-    public function login(){
+    public function login()
+    {
         return view('auth.login');
     }
 
-    public function authenticate(){
+    public function authenticate()
+    {
         $validated = request()->validate([
-            'email' =>'required|email',
-            'password' =>'required|min:8',
+            'email' => 'required|email',
+            'password' => 'required|min:8',
         ]);
 
         auth()->attempt($validated);
@@ -38,7 +42,8 @@ class AuthController extends Controller
         return redirect()->route('home')->with('success', 'You are now logged in!');
     }
 
-    public function logout(){
+    public function logout()
+    {
         auth()->logout();
 
         return redirect()->route('home')->with('success', 'You are now logged out!');

@@ -8,19 +8,12 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * content 240  varchar
-     * likes 0 default
-     * created_at
-     * updated_at
      */
     public function up(): void
     {
-        Schema::create('ideas', function (Blueprint $table) {
-            $table->id();
+        Schema::create('follower_user', function (Blueprint $table) {
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('content');
-            $table->unsignedBigInteger('likes')->default(0);
+            $table->foreignId('follower_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -30,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ideas');
+        Schema::dropIfExists('follower_user');
     }
 };

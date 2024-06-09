@@ -8,7 +8,8 @@ use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    public function store(Idea $idea){
+    public function store(Idea $idea)
+    {
 
         $comment = Comment::create([
             'idea_id' => $idea->id,

@@ -5,7 +5,7 @@
     </div>
 
     <form
-        action={{ route('home') }}
+        action={{ route('dashboard') }}
         method="get"
     >
         <div class="card-body">
@@ -13,6 +13,7 @@
                 class="form-control w-100"
                 name="search"
                 type="text"
+                value="{{ request('search') }}"
                 placeholder="..."
             >
             <button class="btn btn-dark mt-2"> Search</button>

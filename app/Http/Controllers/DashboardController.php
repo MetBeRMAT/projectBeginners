@@ -9,7 +9,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $idea = Idea::orderBy('created_at', 'desc');
+        $idea = Idea::with('user', 'comments.user')->orderBy('created_at', 'desc');
 
         if (request()->has('search')) {
             //                    colonna  operatore          valore
@@ -17,8 +17,9 @@ class DashboardController extends Controller
         }
 
 
-        return view('components.storefront.storefront', [
-            'ideas' => $idea->paginate(5)
+        return view('dashboard', [
+            'ideas' => $idea->paginate(5),
+            'user' => auth()->user(),
         ]);
     }
 }
